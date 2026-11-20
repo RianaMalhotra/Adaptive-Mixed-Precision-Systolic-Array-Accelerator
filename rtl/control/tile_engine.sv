@@ -53,7 +53,7 @@ module tile_engine #(
                 col_lanes[c*8 +: 8] = b_mem[(int'(cycle_idx)-c)*N+c];
         end
     end
-    assign clear_array = start && !busy && k_len != 0 && k_len <= K_MAX;
+    assign clear_array = start && !busy && k_len != 0 && int'(k_len) <= K_MAX;
     systolic_array #(.N(N), .ACC_W(ACC_W)) array (
         .clk(clk), .rst_n(rst_n), .clear(clear_array),
         .enable(enable && busy), .mode_int4(active_mode),
