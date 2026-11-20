@@ -27,9 +27,9 @@ async def randomized_tiles(dut):
     dut.mode_int4.value = 0
     dut.a_rows.value = 0
     dut.b_cols.value = 0
-    cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     await RisingEdge(dut.clk)
-    await Timer(1, unit="ns")
+    await Timer(1, units="ns")
     dut.rst_n.value = 1
     for packed in (False, True):
         for k in (1, 3, 9, 17):
@@ -37,7 +37,7 @@ async def randomized_tiles(dut):
             b = [[rng.randrange(256) for _ in range(n)] for _ in range(k)]
             dut.clear.value = 1
             await RisingEdge(dut.clk)
-            await Timer(1, unit="ns")
+            await Timer(1, units="ns")
             dut.clear.value = 0
             dut.mode_int4.value = int(packed)
             for cycle in range(k + 2 * n - 2):
@@ -46,7 +46,7 @@ async def randomized_tiles(dut):
                 dut.a_rows.value = sum(x << (8*r) for r, x in enumerate(rows))
                 dut.b_cols.value = sum(x << (8*c) for c, x in enumerate(cols))
                 await RisingEdge(dut.clk)
-                await Timer(1, unit="ns")
+                await Timer(1, units="ns")
             raw = int(dut.accumulators.value)
             for r in range(n):
                 for c in range(n):

@@ -25,9 +25,9 @@ async def randomized_precision_and_stalls(dut):
     dut.valid_in.value = 0
     dut.a_in.value = 0
     dut.b_in.value = 0
-    cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     await RisingEdge(dut.clk)
-    await Timer(1, unit="ns")
+    await Timer(1, units="ns")
     dut.rst_n.value = 1
     expected = 0
     for i in range(500):
@@ -47,5 +47,5 @@ async def randomized_precision_and_stalls(dut):
         elif enable and valid:
             expected = signed(expected + contribution(a, b, packed), 32)
         await RisingEdge(dut.clk)
-        await Timer(1, unit="ns")
+        await Timer(1, units="ns")
         assert signed(int(dut.accumulator.value), 32) == expected, f"iteration {i}"
