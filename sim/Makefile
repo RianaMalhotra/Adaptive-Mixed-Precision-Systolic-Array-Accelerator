@@ -1,0 +1,9 @@
+SIM ?= verilator
+TOPLEVEL_LANG = verilog
+VERILOG_SOURCES = $(abspath ../rtl/compute/mixed_precision_pe.sv)
+TOPLEVEL = mixed_precision_pe
+MODULE = test_mixed_precision_pe
+include $(shell cocotb-config --makefiles)/Makefile.sim
+
+array:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=systolic_array MODULE=test_systolic_array VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv)" SIM_BUILD=sim_build_array
