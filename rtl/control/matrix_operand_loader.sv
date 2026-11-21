@@ -27,17 +27,17 @@ module matrix_operand_loader #(
     logic in_a, valid_element;
     logic [ADDR_W-1:0] local_addr;
     always_comb begin
-        in_a = (cursor < N*K_TILE);
+        in_a = (32'(cursor) < N*K_TILE);
         if (in_a) begin
             lane = ($clog2(N+1))'(cursor / K_TILE);
             k_lane = ($clog2(K_TILE+1))'(cursor % K_TILE);
         end else begin
-            lane = ($clog2(N+1))'((cursor - (2*N*K_TILE)'(N*K_TILE)) % N);
+            lane = ($clog2(N+1))'((cursor - ($clog2(2*N*K_TILE+1))'(N*K_TILE)) % N);
             k_lane = ($clog2(K_TILE+1))'((cursor - (2*N*K_TILE)'(N*K_TILE)) / N);
         end
-        global_row = IDX_W'(tile_row*N + lane);
-        global_col = IDX_W'(tile_col*N + lane);
-        global_k = IDX_W'(k_block*K_TILE + k_lane);
+        global_row = IDX_W'(tile_row*N + 32'(lane));
+        global_col = IDX_W'(tile_col*N + 32'(lane));
+        global_k = IDX_W'(k_block*K_TILE + 32'(k_lane));
         valid_element = (k_lane < current_k_len) &&
             (in_a ? (global_row < m_dim) : (global_col < p_dim));
         local_addr = ADDR_W'(in_a ? (lane*K_TILE + k_lane) : (k_lane*N + lane));
@@ -61,7 +61,7 @@ module matrix_operand_loader #(
                 busy <= 1'b1;
                 cursor <= '0;
             end else if (busy) begin
-                if (cursor == (2*N*K_TILE)-1) begin
+                if (32'(cursor) == (2*N*K_TILE)-1) begin
                     busy <= 1'b0;
                     done <= 1'b1;
                 end else begin
