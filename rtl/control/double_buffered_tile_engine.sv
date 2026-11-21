@@ -2,9 +2,9 @@
 // Host writes packed A[row,k] and B[k,col] bytes into separate stores.
 // A and B are row-major with strides K_MAX and N respectively.
 // start launches one N x N output tile; enable stalls the whole wavefront.
-// Writes are only accepted when idle. mode_int4 is sampled on start.
+// Writes target the inactive bank, including during compute. mode_int4 is sampled on start.
 // Results remain readable until the next start. done is sticky until start.
-module double_buffered_tile_engine #
+module double_buffered_tile_engine #(
     parameter int N = 4,
     parameter int K_MAX = 32,
     parameter int ACC_W = 32,
