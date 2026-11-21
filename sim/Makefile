@@ -32,7 +32,7 @@ scheduler:
 
 .PHONY: multitile
 multitile:
-	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_multitile_top MODULE=test_tensorforge_multitile_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/multi_tile_scheduler.sv) $(abspath ../rtl/top/tensorforge_multitile_top.sv)" SIM_BUILD=sim_build_multitile
+	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_multitile_top MODULE=test_tensorforge_multitile_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/multi_tile_scheduler.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_multitile_top.sv)" SIM_BUILD=sim_build_multitile
 
 .PHONY: addressing
 addressing:

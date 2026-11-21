@@ -7,6 +7,13 @@ from cocotb.triggers import RisingEdge, Timer
 async def three_tiles_end_to_end(dut):
     n = 4
     dut.rst_n.value = 0
+    dut.m_dim.value = 4
+    dut.p_dim.value = 4
+    dut.tile_row.value = 0
+    dut.tile_col.value = 0
+    dut.first_k_block.value = 1
+    dut.read_row.value = 0
+    dut.read_col.value = 0
     dut.configure.value = 0
     dut.requested_tiles.value = 0
     dut.tile_ready.value = 0
@@ -89,6 +96,26 @@ async def three_tiles_end_to_end(dut):
         else:
             assert False, "tile completion timeout"
         await verify(a,b,k,mode)
+        for _ in range(24):
+            await tick()
+            if not int(dut.writeback_busy.value) and int(dut.accepted_writes.value) == (tile+1)*16:
+                break
+        assert int(dut.accepted_writes.value) == (tile+1)*16
+        for r in range(n):
+            for c in range(n):
+                expected = 0
+                for t in range(k):
+                    x, y = a[r][t], b[t][c]
+                    if mode:
+                        expected += signed(x&15,4)*signed(y&15,4)
+                        expected += signed(x>>4,4)*signed(y>>4,4)
+                    else:
+                        expected += signed(x,8)*signed(y,8)
+                dut.read_row.value = r
+                dut.read_col.value = c
+                await Timer(1, units="ns")
+                assert int(dut.read_valid.value) == 1
+                assert signed(int(dut.read_data.value),32) == expected
     assert int(dut.all_done.value) == 1
     assert int(dut.launched_tiles.value) == 3
     assert int(dut.completed_tiles.value) == 3
