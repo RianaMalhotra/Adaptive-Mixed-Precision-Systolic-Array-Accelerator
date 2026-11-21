@@ -32,15 +32,15 @@ module matrix_operand_loader #(
             lane = ($clog2(N+1))'(cursor / K_TILE);
             k_lane = ($clog2(K_TILE+1))'(cursor % K_TILE);
         end else begin
-            lane = ($clog2(N+1))'((cursor - ($clog2(2*N*K_TILE+1))'(N*K_TILE)) % N);
-            k_lane = ($clog2(K_TILE+1))'((cursor - (2*N*K_TILE)'(N*K_TILE)) / N);
+            lane = ($clog2(N+1))'((32'(cursor) - (N*K_TILE)) % N);
+            k_lane = ($clog2(K_TILE+1))'((32'(cursor) - (N*K_TILE)) / N);
         end
         global_row = IDX_W'(tile_row*N + 32'(lane));
         global_col = IDX_W'(tile_col*N + 32'(lane));
         global_k = IDX_W'(k_block*K_TILE + 32'(k_lane));
         valid_element = (k_lane < current_k_len) &&
             (in_a ? (global_row < m_dim) : (global_col < p_dim));
-        local_addr = ADDR_W'(in_a ? (lane*K_TILE + k_lane) : (k_lane*N + lane));
+        local_addr = ADDR_W'(in_a ? (32'(lane)*K_TILE + 32'(k_lane)) : (32'(k_lane)*N + 32'(lane)));
         a_write = busy && in_a;
         b_write = busy && !in_a;
         write_addr = local_addr;
