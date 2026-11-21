@@ -25,3 +25,7 @@ benchmark:
 .PHONY: double_buffered
 double_buffered:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=double_buffered_tile_engine MODULE=test_double_buffered_tile_engine VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv)" SIM_BUILD=sim_build_double_buffered
+
+.PHONY: scheduler
+scheduler:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=multi_tile_scheduler MODULE=test_multi_tile_scheduler VERILOG_SOURCES="$(abspath ../rtl/control/multi_tile_scheduler.sv)" SIM_BUILD=sim_build_scheduler
