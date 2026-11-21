@@ -1,16 +1,14 @@
-# Multi-tile sequencing
+# Integrated multi-tile sequencing
 
-The standalone multi_tile_scheduler issues one-cycle start pulses to a
-tile engine when a host-provided tile_ready credit is present and the
-engine is idle. The host configures a target tile count and stages
-each tile into the engine's inactive bank before asserting tile_ready.
-A single outstanding credit is supported.
+The tensorforge_multitile_top module connects multi_tile_scheduler to
+double_buffered_tile_engine. Host configures requested_tiles, stages one
+tile into the inactive operand bank, and asserts tile_ready. The scheduler
+starts the engine and waits for completion before issuing subsequent starts.
 
-The controller counts launches and rising-edge completions, handles
-host preparation delays, and sets all_done after the final tile.
-It does not implement automatic operand address generation, DMA,
-result accumulation across output tiles, or output-memory writeback.
+The integrated cocotb regression executes three tiles with varying K and
+INT8/packed INT4, checking the full output accumulator matrix each time.
 
-The scheduler is separately verified before integration with the
-double_buffered_tile_engine. Do not interpret this milestone as a
-fully autonomous matrix-multiplication controller.
+This is host-assisted sequencing, not a fully autonomous matrix GEMM:
+there is no DMA, output-tile writeback, automatic matrix address
+generation, or guarantee of simultaneous host load and compute in the
+integrated regression. Those are future milestones.

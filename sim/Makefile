@@ -29,3 +29,7 @@ double_buffered:
 .PHONY: scheduler
 scheduler:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=multi_tile_scheduler MODULE=test_multi_tile_scheduler VERILOG_SOURCES="$(abspath ../rtl/control/multi_tile_scheduler.sv)" SIM_BUILD=sim_build_scheduler
+
+.PHONY: multitile
+multitile:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_multitile_top MODULE=test_tensorforge_multitile_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/multi_tile_scheduler.sv) $(abspath ../rtl/top/tensorforge_multitile_top.sv)" SIM_BUILD=sim_build_multitile
