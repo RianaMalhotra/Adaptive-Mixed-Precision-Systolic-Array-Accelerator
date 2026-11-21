@@ -38,6 +38,24 @@ module accelerator_regs #(
     logic [N*N*ACC_W-1:0] results;
     logic start_pulse, a_write, b_write;
     logic done_prev;
+    logic inject_enable;
+    logic [31:0] inject_mask;
+    logic dfx_sample, dfx_clear, dfx_mismatch, dfx_sticky;
+    logic [31:0] dfx_observed, dfx_samples, dfx_faults;
+    logic [$clog2(N*N)-1:0] dfx_first_index;
+    logic [31:0] selected_result;
+    assign selected_result = results[int'(result_index)*ACC_W +: 32];
+    assign dfx_sample = req_valid && req_write && req_addr == 8'h30 && req_wdata[1] && !busy;
+    assign dfx_clear = req_valid && req_write && req_addr == 8'h30 && req_wdata[2];
+    result_fault_monitor #(.DATA_W(32), .INDEX_W($clog2(N*N))) dfx (
+        .clk(clk), .rst_n(rst_n), .clear_status(dfx_clear),
+        .sample_valid(dfx_sample), .sample_index(result_index),
+        .reference_result(selected_result), .inject_enable(inject_enable),
+        .inject_mask(inject_mask), .observed_result(dfx_observed),
+        .mismatch(dfx_mismatch), .fault_sticky(dfx_sticky),
+        .first_fault_index(dfx_first_index),
+        .sample_count(dfx_samples), .fault_count(dfx_faults)
+    );
     assign req_ready = 1'b1;
     assign irq = irq_enable && irq_pending;
     assign start_pulse = req_valid && req_write && req_addr == 8'h00 && req_wdata[0] && !busy;
@@ -52,9 +70,15 @@ module accelerator_regs #(
             8'h0c: req_rdata = cycles;
             8'h10: req_rdata = stalls;
             8'h18: req_rdata = 32'(result_index);
-            8'h1c: req_rdata = results[int'(result_index)*ACC_W +: 32];
+            8'h1c: req_rdata = dfx_observed;
             8'h20: req_rdata = 32'(a_addr);
             8'h28: req_rdata = 32'(b_addr);
+            8'h30: req_rdata = 32'(inject_enable);
+            8'h34: req_rdata = inject_mask;
+            8'h38: req_rdata = {30'b0, dfx_mismatch, dfx_sticky};
+            8'h3c: req_rdata = dfx_samples;
+            8'h40: req_rdata = dfx_faults;
+            8'h44: req_rdata = 32'(dfx_first_index);
             default: req_rdata = '0;
         endcase
     end
@@ -77,6 +101,8 @@ module accelerator_regs #(
             b_addr <= '0;
             result_index <= '0;
             done_prev <= 1'b0;
+            inject_enable <= 1'b0;
+            inject_mask <= '0;
         end else begin
             done_prev <= done;
             if (done && !done_prev)
@@ -94,6 +120,8 @@ module accelerator_regs #(
                     8'h18: result_index <= req_wdata[$clog2(N*N)-1:0];
                     8'h20: if (!busy) a_addr <= req_wdata[ADDR_W-1:0];
                     8'h28: if (!busy) b_addr <= req_wdata[ADDR_W-1:0];
+                    8'h30: inject_enable <= req_wdata[0];
+                    8'h34: inject_mask <= req_wdata;
                     default: ;
                 endcase
             end

@@ -1,13 +1,15 @@
-# TensorForge DFX result monitor
+# DFX integration
 
-The standalone `result_fault_monitor` compares an intentionally XOR-corrupted
-observed accumulator word with the unmodified accumulator reference. On
-`sample_valid`, a nonzero mismatch increments `fault_count`, asserts a sticky
-fault flag and captures the first failing result index. `sample_count` tracks
-all valid observations. Reset or `clear_status` resets diagnostics.
+The memory-mapped accelerator integrates the standalone result fault monitor.
+Select an accumulator with RESULT_INDEX (0x18), set XOR mask at 0x34,
+and enable injection with bit 0 of DFX_CTRL (0x30).
+RESULT_DATA (0x1c) returns the potentially injected result.
 
-This is **fault injection test infrastructure**, not production fault-tolerant
-hardware: both paths derive from the same original accumulator. It cannot
-detect a common-mode computation error and does not provide ECC, TMR,
-scan insertion or fault coverage claims. The next step is to connect the
-monitor to the register interface and measure injected-fault detection.
+Writing DFX_CTRL bit 1 samples the selected result (only when idle).
+Bit 2 clears diagnostics. DFX_STATUS (0x38) reports sticky fault
+(bit 0) and current mismatch (bit 1). DFX_SAMPLES (0x3c),
+DFX_FAULTS (0x40), and DFX_FIRST_INDEX (0x44) expose diagnostics.
+
+This is test instrumentation comparing against the same original
+accumulator, not independent fault-tolerant compute. Existing IRQ
+indicates tile completion only.

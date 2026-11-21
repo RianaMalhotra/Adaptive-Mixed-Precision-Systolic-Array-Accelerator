@@ -68,3 +68,57 @@ async def host_programs_and_reads_matrix(dut):
             assert actual == expected, (r, c, actual, expected)
     await write(0x14, 1)
     assert int(dut.irq.value) == 0
+
+@cocotb.test()
+async def dfx_register_fault_injection(dut):
+    dut.rst_n.value = 0
+    dut.req_valid.value = 0
+    dut.req_write.value = 0
+    dut.req_addr.value = 0
+    dut.req_wdata.value = 0
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+
+    async def tick():
+        await RisingEdge(dut.clk)
+        await Timer(1, units="ns")
+
+    async def write(addr, data):
+        dut.req_addr.value = addr
+        dut.req_wdata.value = data
+        dut.req_valid.value = 1
+        dut.req_write.value = 1
+        await tick()
+        dut.req_valid.value = 0
+        dut.req_write.value = 0
+
+    async def read(addr):
+        dut.req_addr.value = addr
+        dut.req_valid.value = 1
+        dut.req_write.value = 0
+        await Timer(1, units="ns")
+        value = int(dut.req_rdata.value)
+        dut.req_valid.value = 0
+        return value
+
+    await tick()
+    dut.rst_n.value = 1
+    await write(0x18, 5)
+    await write(0x34, 0x80)
+    await write(0x30, 1)
+    reference = (int(dut.engine.results.value) >> (5 * 32)) & 0xffffffff
+    assert await read(0x1c) == (reference ^ 0x80)
+    assert await read(0x38) == 2
+    await write(0x30, 3)
+    assert await read(0x38) == 3
+    assert await read(0x3c) == 1
+    assert await read(0x40) == 1
+    assert await read(0x44) == 5
+    await write(0x34, 0)
+    assert await read(0x38) == 1
+    await write(0x30, 3)
+    assert await read(0x3c) == 2
+    assert await read(0x40) == 1
+    await write(0x30, 4)
+    assert await read(0x38) == 0
+    assert await read(0x3c) == 0
+    assert await read(0x40) == 0
