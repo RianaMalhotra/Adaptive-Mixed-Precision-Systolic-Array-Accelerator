@@ -22,3 +22,4 @@ jobs:
       - run: make -C sim double_buffered
       - run: make -C sim scheduler
       - run: make -C sim multitile
+      - run: make -C sim addressing
