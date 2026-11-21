@@ -70,7 +70,7 @@ async def full_matrix_partial_tiles_and_reduction(dut):
         else:
             assert False, "tile timeout"
     assert int(dut.job_done.value) == 1
-    assert int(dut.accepted_writes.value) == 8*16 - 2*4*3 - 2*4*3 + 2*3*3
+    assert int(dut.accepted_writes.value) == 2*m*p
     for r in range(m):
         for c in range(p):
             dut.read_row.value = r
