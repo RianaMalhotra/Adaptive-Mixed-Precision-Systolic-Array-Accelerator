@@ -23,7 +23,7 @@ module matrix_tile_iterator #(
     assign first_k_block = (k_block == 0);
     assign last_k_block = (k_block + 1'b1 == k_limit);
     assign remaining = k_latched - IDX_W'(k_block*K_TILE);
-    assign current_k_len = (remaining >= K_TILE) ?
+    assign current_k_len = (32'(remaining) >= K_TILE) ?
         ($clog2(K_TILE+1))'(K_TILE) :
         ($clog2(K_TILE+1))'(remaining);
     always_ff @(posedge clk) begin
@@ -39,9 +39,9 @@ module matrix_tile_iterator #(
             k_latched <= '0;
             tiles_visited <= '0;
         end else if (start && !active) begin
-            row_limit <= (m_dim + N - 1) / N;
-            col_limit <= (p_dim + N - 1) / N;
-            k_limit <= (k_dim + K_TILE - 1) / K_TILE;
+            row_limit <= IDX_W'((32'(m_dim) + N - 1) / N);
+            col_limit <= IDX_W'((32'(p_dim) + N - 1) / N);
+            k_limit <= IDX_W'((32'(k_dim) + K_TILE - 1) / K_TILE);
             k_latched <= k_dim;
             tile_row <= '0;
             tile_col <= '0;
