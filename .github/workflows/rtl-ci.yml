@@ -24,3 +24,4 @@ jobs:
       - run: make -C sim multitile
       - run: make -C sim addressing
       - run: make -C sim writeback
+      - run: make -C sim writeback_sequencer

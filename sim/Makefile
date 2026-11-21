@@ -41,3 +41,7 @@ addressing:
 .PHONY: writeback
 writeback:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=output_accumulator MODULE=test_output_accumulator VERILOG_SOURCES="$(abspath ../rtl/memory/output_accumulator.sv)" SIM_BUILD=sim_build_writeback
+
+.PHONY: writeback_sequencer
+writeback_sequencer:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=tile_writeback_sequencer MODULE=test_tile_writeback_sequencer VERILOG_SOURCES="$(abspath ../rtl/control/tile_writeback_sequencer.sv)" SIM_BUILD=sim_build_writeback_sequencer
