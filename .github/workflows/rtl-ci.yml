@@ -15,3 +15,4 @@ jobs:
       - run: make -C sim
       - run: make -C sim array
       - run: make -C sim tile
+      - run: make -C sim buffer
