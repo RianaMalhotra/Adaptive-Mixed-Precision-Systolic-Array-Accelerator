@@ -29,3 +29,4 @@ jobs:
       - run: make -C sim matrix_job
       - run: make -C sim matrix_integration
       - run: make -C sim operand_loader
+      - run: make -C sim autoload
