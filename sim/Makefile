@@ -45,3 +45,7 @@ writeback:
 .PHONY: writeback_sequencer
 writeback_sequencer:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=tile_writeback_sequencer MODULE=test_tile_writeback_sequencer VERILOG_SOURCES="$(abspath ../rtl/control/tile_writeback_sequencer.sv)" SIM_BUILD=sim_build_writeback_sequencer
+
+.PHONY: iterator
+iterator:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=matrix_tile_iterator MODULE=test_matrix_tile_iterator VERILOG_SOURCES="$(abspath ../rtl/control/matrix_tile_iterator.sv)" SIM_BUILD=sim_build_iterator

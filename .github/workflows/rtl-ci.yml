@@ -25,3 +25,4 @@ jobs:
       - run: make -C sim addressing
       - run: make -C sim writeback
       - run: make -C sim writeback_sequencer
+      - run: make -C sim iterator
