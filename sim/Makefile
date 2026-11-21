@@ -57,3 +57,7 @@ matrix_job:
 .PHONY: matrix_integration
 matrix_integration:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_matrix_job_top MODULE=test_tensorforge_matrix_job_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/matrix_tile_iterator.sv) $(abspath ../rtl/control/matrix_job_controller.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_matrix_job_top.sv)" SIM_BUILD=sim_build_matrix_integration
+
+.PHONY: operand_loader
+operand_loader:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=matrix_operand_loader MODULE=test_matrix_operand_loader VERILOG_SOURCES="$(abspath ../rtl/control/matrix_operand_loader.sv)" SIM_BUILD=sim_build_operand_loader
