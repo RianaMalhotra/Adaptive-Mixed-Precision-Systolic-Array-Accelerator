@@ -19,3 +19,4 @@ jobs:
       - run: make -C sim regs
       - run: make -C sim dfx
       - run: make -C sim benchmark
+      - run: make -C sim double_buffered

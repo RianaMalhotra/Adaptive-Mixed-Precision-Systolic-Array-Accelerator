@@ -21,3 +21,7 @@ dfx:
 .PHONY: benchmark
 benchmark:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=tile_engine MODULE=test_tile_performance VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/tile_engine.sv)" SIM_BUILD=sim_build_benchmark
+
+.PHONY: double_buffered
+double_buffered:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=double_buffered_tile_engine MODULE=test_double_buffered_tile_engine VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv)" SIM_BUILD=sim_build_double_buffered
