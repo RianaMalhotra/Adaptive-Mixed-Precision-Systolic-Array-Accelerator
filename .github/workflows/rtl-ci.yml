@@ -23,3 +23,4 @@ jobs:
       - run: make -C sim scheduler
       - run: make -C sim multitile
       - run: make -C sim addressing
+      - run: make -C sim writeback

@@ -37,3 +37,7 @@ multitile:
 .PHONY: addressing
 addressing:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=matrix_tile_address_gen MODULE=test_matrix_tile_address_gen VERILOG_SOURCES="$(abspath ../rtl/control/matrix_tile_address_gen.sv)" SIM_BUILD=sim_build_addressing
+
+.PHONY: writeback
+writeback:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=output_accumulator MODULE=test_output_accumulator VERILOG_SOURCES="$(abspath ../rtl/memory/output_accumulator.sv)" SIM_BUILD=sim_build_writeback
