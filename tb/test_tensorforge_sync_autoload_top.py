@@ -46,12 +46,16 @@ async def autoload_signed_int8_matrix(dut):
     dut.start.value = 1
     await tick()
     dut.start.value = 0
-    for _ in range(3500):
+    for elapsed_cycles in range(1, 3501):
         await tick()
         if int(dut.job_done.value):
             break
     else:
         assert False, "autonomous job timed out"
+    # Count useful scalar MACs, excluding padded lanes and tile cells.
+    useful_macs = 1 * m * k * p
+    dut._log.info("BENCH memory=synchronous precision=INT8 cycles=%d useful_macs=%d mac_per_cycle=%.6f",
+                  elapsed_cycles, useful_macs, useful_macs / elapsed_cycles)
     assert int(dut.tiles_visited.value) == 8
     assert int(dut.accepted_writes.value) == 2*m*p
     for r in range(m):
@@ -121,13 +125,17 @@ async def autoload_packed_signed_int4_matrix(dut):
     dut.start.value = 1
     await tick()
     dut.start.value = 0
-    for _ in range(3500):
+    for elapsed_cycles in range(1, 3501):
         await tick()
         if int(dut.job_done.value):
             break
     else:
         assert False, "synchronous SRAM INT4 matrix job timed out"
 
+    # Count useful scalar MACs, excluding padded lanes and tile cells.
+    useful_macs = 2 * m * k * p
+    dut._log.info("BENCH memory=synchronous precision=INT4 cycles=%d useful_macs=%d mac_per_cycle=%.6f",
+                  elapsed_cycles, useful_macs, useful_macs / elapsed_cycles)
     assert int(dut.tiles_visited.value) == 8
     assert int(dut.accepted_writes.value) == 2*m*p
     for r in range(m):
