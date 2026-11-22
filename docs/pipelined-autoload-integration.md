@@ -1,0 +1,3 @@
+# Pipelined matrix integration
+
+The pipelined autoload top connects the fixed one-cycle SRAM request pipeline to the existing matrix controller, compute engine and output accumulator. The two prior memory interfaces remain available. INT8 and packed INT4 regressions compare all 25 output cells against Python references, check eight tile executions and report useful MACs per cycle. A latency budget of fewer than 2500 cycles applies to the 5x33 by 33x5 byte-shaped workload. Actual measurements await CI. This interface assumes fixed read latency and no backpressure; it does not overlap staging of the next tile with computation.
