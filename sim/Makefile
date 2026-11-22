@@ -65,3 +65,7 @@ operand_loader:
 .PHONY: autoload
 autoload:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_autoload_top MODULE=test_tensorforge_autoload_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/matrix_tile_iterator.sv) $(abspath ../rtl/control/matrix_job_controller.sv) $(abspath ../rtl/control/matrix_operand_loader.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_matrix_job_top.sv) $(abspath ../rtl/top/tensorforge_autoload_top.sv)" SIM_BUILD=sim_build_autoload
+
+.PHONY: operand_loader_sync
+operand_loader_sync:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=matrix_operand_loader_sync MODULE=test_matrix_operand_loader_sync VERILOG_SOURCES="$(abspath ../rtl/control/matrix_operand_loader_sync.sv)" SIM_BUILD=sim_build_operand_loader_sync
