@@ -40,3 +40,5 @@ jobs:
         with:
           name: matrix-benchmarks
           path: sim/matrix_*.csv
+
+      - run: make -C sim handshake
