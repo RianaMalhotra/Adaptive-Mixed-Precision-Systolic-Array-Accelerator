@@ -1,0 +1,20 @@
+name: FPGA synthesis
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'rtl/compute/**'
+      - 'scripts/synth_array.py'
+      - '.github/workflows/synthesis.yml'
+jobs:
+  array-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y yosys nextpnr-ice40
+      - run: python3 scripts/synth_array.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: array-synthesis
+          path: synth/results/
