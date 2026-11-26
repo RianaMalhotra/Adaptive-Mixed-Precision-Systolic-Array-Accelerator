@@ -17,7 +17,11 @@ jobs:
       - run: make -C sim tile
       - run: make -C sim buffer
       - run: make -C sim regs
-      - run: make -C sim dfx
+      - run: TENSORFORGE_DFX_CSV="$GITHUB_WORKSPACE/sim/dfx_campaign.csv" make -C sim dfx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dfx-campaign
+          path: sim/dfx_campaign.csv
       - run: make -C sim benchmark
       - run: make -C sim double_buffered
       - run: make -C sim scheduler
