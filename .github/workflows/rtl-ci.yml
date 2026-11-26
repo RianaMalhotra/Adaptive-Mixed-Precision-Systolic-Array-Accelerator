@@ -35,3 +35,8 @@ jobs:
       - run: make -C sim operand_loader_pipelined
       - run: make -C sim pipelined_autoload
       - run: make -C sim prefetch
+      - run: make -C sim matrix_bench
+      - uses: actions/upload-artifact@v4
+        with:
+          name: matrix-benchmarks
+          path: sim/matrix_*.csv
