@@ -81,3 +81,7 @@ operand_loader_pipelined:
 .PHONY: pipelined_autoload
 pipelined_autoload:
 	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_pipelined_autoload_top MODULE=test_tensorforge_pipelined_autoload_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/matrix_tile_iterator.sv) $(abspath ../rtl/control/matrix_job_controller.sv) $(abspath ../rtl/control/matrix_operand_loader_pipelined.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_matrix_job_top.sv) $(abspath ../rtl/top/tensorforge_pipelined_autoload_top.sv)" SIM_BUILD=sim_build_pipelined_autoload
+
+.PHONY: prefetch
+prefetch:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_prefetch_top MODULE=test_tensorforge_prefetch_top VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/matrix_tile_iterator.sv) $(abspath ../rtl/control/matrix_operand_loader_pipelined.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_prefetch_top.sv)" SIM_BUILD=sim_build_prefetch
