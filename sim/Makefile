@@ -91,3 +91,7 @@ matrix_bench:
 	TENSORFORGE_VARIANT=baseline TENSORFORGE_MATRIX_CSV=$(abspath matrix_baseline.csv) $(MAKE) pipelined_autoload BENCH_MODULE=test_matched_matrix_benchmark
 	TENSORFORGE_VARIANT=prefetch TENSORFORGE_MATRIX_CSV=$(abspath matrix_prefetch.csv) $(MAKE) prefetch BENCH_MODULE=test_matched_matrix_benchmark
 	python ../scripts/compare_matrix_bench.py matrix_baseline.csv matrix_prefetch.csv
+
+.PHONY: handshake
+handshake:
+	$(MAKE) SIM=$(SIM) TOPLEVEL=tensorforge_handshake_top MODULE=$(if $(BENCH_MODULE),$(BENCH_MODULE),test_tensorforge_handshake_top) VERILOG_SOURCES="$(abspath ../rtl/compute/mixed_precision_pe.sv) $(abspath ../rtl/compute/systolic_array.sv) $(abspath ../rtl/control/double_buffered_tile_engine.sv) $(abspath ../rtl/control/matrix_tile_iterator.sv) $(abspath ../rtl/control/matrix_operand_loader_handshake.sv) $(abspath ../rtl/control/tile_writeback_sequencer.sv) $(abspath ../rtl/memory/output_accumulator.sv) $(abspath ../rtl/top/tensorforge_handshake_top.sv)" SIM_BUILD=sim_build_handshake
