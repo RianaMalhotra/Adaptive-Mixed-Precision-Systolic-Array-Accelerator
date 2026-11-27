@@ -31,7 +31,9 @@ module mixed_precision_pe #(
         contribution = mode_int4 ? {{(ACC_W-9){product4_sum[8]}}, product4_sum}
                                  : {{(ACC_W-16){product8[15]}}, product8};
     end
+`ifndef SYNTHESIS
     initial assert (ACC_W >= 16) else $fatal(1, "ACC_W must be >= 16");
+`endif
     always_ff @(posedge clk) begin
         if (!rst_n) begin
             a_out <= '0;
