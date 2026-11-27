@@ -3,7 +3,6 @@
 import csv
 import json
 import pathlib
-import re
 import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -12,19 +11,18 @@ OUT.mkdir(parents=True, exist_ok=True)
 rows = []
 for n in (2, 4, 8):
     stem = OUT / f"array_{n}"
-    # Keep simulation assertion in original RTL; remove only this parameter guard
-    # from the synthesis copy (ACC_W is fixed at 32).
-    pe = (ROOT / "rtl/compute/mixed_precision_pe.sv").read_text()
-    pe = re.sub(r"initial assert \(ACC_W >= 16\) else \$fatal\([^;]+;", "", pe)
-    source = OUT / "mixed_precision_pe.sv"
-    source.write_text(pe)
+    # Use the actual RTL; Yosys defines SYNTHESIS automatically.
+    source = ROOT / "rtl/compute/mixed_precision_pe.sv"
     script = (
         f"read_verilog -sv {source} {ROOT/'rtl/compute/systolic_array.sv'}; "
         f"hierarchy -top systolic_array -chparam N {n}; "
         f"synth_ice40 -top systolic_array -json {stem}.json"
     )
     with open(f"{stem}.yosys.log", "w") as log:
-        subprocess.run(["yosys", "-p", script], stdout=log, stderr=subprocess.STDOUT, check=True)
+        proc = subprocess.run(["yosys", "-p", script], stdout=log, stderr=subprocess.STDOUT)
+    if proc.returncode:
+        print(pathlib.Path(f"{stem}.yosys.log").read_text(), flush=True)
+        proc.check_returncode()
     cells = json.loads(pathlib.Path(f"{stem}.json").read_text())["modules"]["systolic_array"]["cells"]
     types = [c["type"] for c in cells.values()]
     # The full accumulator bus is intentionally exposed; out-of-context routing
@@ -39,6 +37,8 @@ for n in (2, 4, 8):
                                "--freq","25","--timing-allow-fail",
                                "--report",str(report)],
                               stdout=log,stderr=subprocess.STDOUT)
+    if proc.returncode:
+        print(pathlib.Path(f"{stem}.nextpnr.log").read_text()[-4000:], flush=True)
     row["route_status"] = "ok" if proc.returncode == 0 else "failed"
     row["fmax_mhz"] = ""
     if proc.returncode == 0 and report.exists():
